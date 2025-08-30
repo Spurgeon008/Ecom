@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 
 {% block content %}
@@ -8,7 +8,14 @@
     <div class="container">
     
     <!-- ============================ COMPONENT 1 ================================= -->
-    
+    {% if not cart_items%}
+        <h2 class="text-center">Shopping cart is empty </h2>
+        <br>
+        <div class = 'text-center'>
+        <a href="{% url 'store' %}" class="btn btn-primary">Continue Shopping</a>
+        </div>
+        {% else %}
+
     <div class="row">
         <aside class="col-lg-9">
     <div class="card">
@@ -68,12 +75,12 @@
         </td>
         <td> 
             <div class="price-wrap"> 
-                <var class="price">${{ cart_item.product.price }}</var> 
+                <var class="price">${{ cart_item.sub_total }}</var> 
                 <small class="text-muted"> ${{ cart_item.product.price }} each </small> 
             </div> <!-- price-wrap .// -->
         </td>
         <td class="text-right"> 
-        <a href="" class="btn btn-danger"> Remove</a>
+        <a href="{% url 'remove_cart_item' cart_item.product.id %}" class="btn btn-danger"> Remove</a>
         </td>
     </tr>
     {% endfor %}
@@ -103,7 +110,7 @@
                     <img src="{% static 'images/misc/payments.png' %}" height="26">
                 </p>
                 <a href="./place-order.html" class="btn btn-primary btn-block"> Checkout </a>
-                <a href="./store.html" class="btn btn-light btn-block">Continue Shopping</a>
+                <a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
             </div> <!-- card-body.// -->
             </div> <!-- card.// -->
     
@@ -116,5 +123,5 @@
     </div> <!-- container .//  -->
     </section>
     <!-- ========================= SECTION CONTENT END// ========================= -->
-
+    {% endif %}
 {% endblock %}
