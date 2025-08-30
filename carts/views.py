@@ -17,6 +17,9 @@ def cart(request, total=0, quantity=0, cart_items=None):
         grand_total = total + tax
     except Cart.DoesNotExist:
         pass
+        
+    # Store cart count in session
+    request.session['cart_count'] = quantity
 
     context = {
         'total': total,
@@ -57,7 +60,12 @@ def add_cart(request, product_id):
             )
             cart_item.save()
     
-    return redirect('cart')
+    # Update cart count in session
+    cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+    request.session['cart_count'] = sum(item.quantity for item in cart_items)
+    
+    # Redirect back to the product detail page
+    return redirect(product.get_url())
 
 def remove_cart(request, product_id, cart_item_id):
     cart = Cart.objects.get(cart_id=_cart_id(request))
@@ -69,6 +77,11 @@ def remove_cart(request, product_id, cart_item_id):
             cart_item.save()
         else:
             cart_item.delete()
+            
+        # Update cart count in session
+        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+        request.session['cart_count'] = sum(item.quantity for item in cart_items)
+        
     except CartItem.DoesNotExist:
         pass
     return redirect('cart')
