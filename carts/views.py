@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Cart, CartItem
 from store.models import Product
+from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
+
 
 # Create your views here.
 def cart(request, total=0, quantity=0, cart_items=None):
