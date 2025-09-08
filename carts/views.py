@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Cart, CartItem
-from store.models import Product
+from store.models import Product,Variation
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -34,6 +34,21 @@ def cart(request, total=0, quantity=0, cart_items=None):
     return render(request, 'store/cart.html', context)
 
 def add_cart(request, product_id):
+
+    if request.method == 'POST':
+        for item in request.POST:
+            key = item
+            value = request.POST.get(key)  
+            
+            try:
+                variation = Variation.objects.get(product=product, variation_category_iexact=key, variation_value_iexact=value)
+            except:
+                variation = None
+
+    else:
+        color = None
+        size = None
+
     product = get_object_or_404(Product, id=product_id)
     
     try:

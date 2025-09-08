@@ -33,12 +33,23 @@ def product_detail(request, category_slug, product_slug):
         single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
         in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=single_product).exists()
         
+        # Get variations for the product
+        variations = single_product.variation_set.all()
+        
+        # Group variations by category
+        variations_dict = {}
+        for variation in variations:
+            if variation.variation_category not in variations_dict:
+                variations_dict[variation.variation_category] = []
+            variations_dict[variation.variation_category].append(variation)
+            
     except Exception as e:
         raise e
 
     context = {
-        'single_product':single_product,
-        'in_cart':in_cart,
+        'single_product': single_product,
+        'in_cart': in_cart,
+        'variations': variations_dict,
     }
     
     return render(request, 'store/product_detail.html', context)
